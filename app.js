@@ -1,13 +1,39 @@
+// Selectors
 const inputUser = document.getElementById('input-user');
 const button = document.querySelector('.btn');
+const warningText = document.querySelector('.warning-text');
 
-// Global variables
+const nameText = document.querySelector('.name-text');
+const agifyText = document.querySelector('.agify-text');
+const genderizeText = document.querySelector('.genderize-text');
+const nationalizeText = document.querySelector('.nationalize-text');
+const remarksText = document.querySelector('.remarks-text');
+
+// Global variable
+var myModal = new bootstrap.Modal(document.getElementById('myModal'));
 
 button.addEventListener('click', function () {
-	console.log(inputUser.value);
-	agify_api(inputUser.value);
-	nationalize(inputUser.value);
-	genderize(inputUser.value);
+	if (inputUser.value === '') {
+		warningText.innerHTML = `<p class="text-danger">Please enter a username</p>`;
+		nameText.innerHTML = '';
+		agifyText.innerHTML = '';
+		genderizeText.innerHTML = '';
+		nationalizeText.innerHTML = '';
+
+		myModal.show();
+	} else {
+		warningText.innerHTML = ``;
+		myModal.show();
+		// Calling all the functions
+		nameText.innerHTML = `You name is <b>${inputUser.value}</b>`;
+		console.log(inputUser.value);
+		agify_api(inputUser.value);
+		nationalize(inputUser.value);
+		genderize(inputUser.value);
+		remarksText.innerHTML = `Did I get this right? Let me know! &#10084;&#65039;`;
+	}
+	//removing the value in the input text
+	inputUser.value = '';
 });
 
 // For guessing the user age
@@ -22,6 +48,12 @@ function agify_api(name) {
 function show_age(data) {
 	const ageData = data;
 	console.log(ageData.age);
+	if (ageData.age == null) {
+		const age = Math.floor(Math.random() * 30);
+		agifyText.innerHTML = `<b>${age}</b> years old`;
+	} else {
+		agifyText.innerHTML = `<b>${ageData.age}</b> years old`;
+	}
 }
 
 // For guessing the user national
@@ -49,15 +81,36 @@ function country_details(userCountry) {
 	});
 
 	if (countryID == undefined) {
-		const country_details_link = `https://restcountries.com/v3.1/alpha/ph`;
+		var randomCountryCodes = [
+			'AT',
+			'CA',
+			'CN',
+			'DO',
+			'JP',
+			'PH',
+			'EG',
+			'FI',
+			'FR',
+			'HK',
+		];
+		var randomCountryCode =
+			randomCountryCodes[Math.floor(Math.random() * randomCountryCodes.length)];
+
+		nationalizeText.innerHTML = `${randomCountryCode}`;
+
+		const country_details_link = `https://restcountries.com/v3.1/alpha/${randomCountryCode}`;
 
 		fetch(country_details_link)
 			.then((response) => response.json())
 			.then((data) =>
 				data.forEach((element) => {
-					console.log(element.name.common);
-					console.log(element.demonyms.eng.f);
-					console.log(element.flags.png);
+					nationalizeText.innerHTML = `
+						<div>
+							You're a <b>${element.demonyms.eng.f}</b> 
+							living in <b>${element.name.common}</b>
+							<img src="${element.flags.png}" class="mt-3"/>
+						</div>
+					`;
 				})
 			);
 	} else {
@@ -67,9 +120,13 @@ function country_details(userCountry) {
 			.then((response) => response.json())
 			.then((data) =>
 				data.forEach((element) => {
-					console.log(element.name.common);
-					console.log(element.demonyms.eng.f);
-					console.log(element.flags.png);
+					nationalizeText.innerHTML = `
+						<div>
+							You're a <b>${element.demonyms.eng.f}</b> 
+							living in <b>${element.name.common}</b>
+							<img src="${element.flags.png}" class="mt-3"/>
+						</div>
+					`;
 				})
 			);
 	}
@@ -87,4 +144,11 @@ function genderize(name) {
 function show_gender(data) {
 	const genderData = data;
 	console.log(genderData.gender);
+	if (genderData.gender === null) {
+		var genders = ['female', 'male'];
+		var randomGender = genders[Math.floor(Math.random() * genders.length)];
+		genderizeText.innerHTML = `<b>${randomGender}</b>`;
+	} else {
+		genderizeText.innerHTML = `<b>${genderData.gender}</b>`;
+	}
 }
