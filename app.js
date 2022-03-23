@@ -4,6 +4,7 @@ const button = document.querySelector('.btn');
 // Global variables
 
 button.addEventListener('click', function () {
+	console.log(inputUser.value);
 	agify_api(inputUser.value);
 	nationalize(inputUser.value);
 	genderize(inputUser.value);
@@ -34,13 +35,44 @@ function nationalize(name) {
 
 function show_national(data) {
 	const showNational = data;
-
 	const userCountry = showNational.country;
+	country_details(userCountry);
+}
 
-	userCountry.forEach((element) => {
-		console.log(element.country_id);
-		console.log(element.probability);
+// Country nationalize detials
+function country_details(userCountry) {
+	const countryDetails = userCountry;
+	let countryID;
+
+	countryDetails.forEach((element) => {
+		countryID = element.country_id;
 	});
+
+	if (countryID == undefined) {
+		const country_details_link = `https://restcountries.com/v3.1/alpha/ph`;
+
+		fetch(country_details_link)
+			.then((response) => response.json())
+			.then((data) =>
+				data.forEach((element) => {
+					console.log(element.name.common);
+					console.log(element.demonyms.eng.f);
+					console.log(element.flags.png);
+				})
+			);
+	} else {
+		const country_details_link = `https://restcountries.com/v3.1/alpha/${countryID}`;
+
+		fetch(country_details_link)
+			.then((response) => response.json())
+			.then((data) =>
+				data.forEach((element) => {
+					console.log(element.name.common);
+					console.log(element.demonyms.eng.f);
+					console.log(element.flags.png);
+				})
+			);
+	}
 }
 
 //For guessing the user gender
