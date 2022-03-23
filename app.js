@@ -19,6 +19,7 @@ button.addEventListener('click', function () {
 		agifyText.innerHTML = '';
 		genderizeText.innerHTML = '';
 		nationalizeText.innerHTML = '';
+		remarksText.innerHTML = ``;
 
 		myModal.show();
 	} else {
